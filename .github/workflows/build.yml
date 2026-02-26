@@ -14,15 +14,12 @@ jobs:
       - name: Build
         shell: cmd
         run: |
-          msbuild stalcraft_internal\stalcraft_internal.vcxproj ^
-            /p:Configuration=Release ^
-            /p:Platform=x64 ^
-            /p:AdditionalDependencies="opengl32.lib;kernel32.lib;user32.lib;%(AdditionalDependencies)"
-          if exist stalcraft_internal\build\release\stalcraft_internal.dll (echo BUILD OK) else (echo BUILD FAILED && exit /b 1)
+          msbuild stalcraft_internal\stalcraft_internal.vcxproj /p:Configuration=Release /p:Platform=x64
+          if exist chams\build\release\stalcraft_internal.dll (echo BUILD OK) else (echo BUILD FAILED && exit /b 1)
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: stalcraft_internal
-          path: stalcraft_internal\build\release\stalcraft_internal.dll
+          path: chams\build\release\stalcraft_internal.dll
           retention-days: 30
