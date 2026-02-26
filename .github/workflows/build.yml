@@ -1,0 +1,25 @@
+name: Build Chams DLL
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: microsoft/setup-msbuild@v2
+
+      - name: Build
+        shell: cmd
+        run: |
+          msbuild stalcraft_internal.vcxproj /p:Configuration=Release /p:Platform=x64
+          if exist x64\Release\stalcraft_internal.dll (echo BUILD OK) else (echo BUILD FAILED && exit /b 1)
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: stalcraft_internal
+          path: x64\Release\stalcraft_internal.dll
+          retention-days: 30
