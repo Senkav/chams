@@ -3,23 +3,30 @@ name: Build Chams DLL
 on:
   push:
     branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: microsoft/setup-msbuild@v2
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Build
-        shell: cmd
-        run: |
-          msbuild stalcraft_internal\stalcraft_internal.vcxproj /p:Configuration=Release /p:Platform=x64
-          if exist chams\build\release\stalcraft_internal.dll (echo BUILD OK) else (echo BUILD FAILED && exit /b 1)
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
 
-      - name: Upload
-        uses: actions/upload-artifact@v4
-        with:
-          name: stalcraft_internal
-          path: chams\build\release\stalcraft_internal.dll
-          retention-days: 30
+    - name: Build Release x64
+      run: |
+        msbuild stalcraft_internal\stalcraft_internal.vcxproj `
+          /p:Configuration=Release `
+          /p:Platform=x64
+
+    - name: Upload DLL
+      uses: actions/upload-artifact@v4
+      with:
+        name: stalcraft_internal
+        path: stalcraft_internal\build\release\stalcraft_internal.dll
+        if-no-files-found: error
